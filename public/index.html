@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Waste Management — AI Prediction System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css" />
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<div id="toast"></div>
+
+<div class="app-layout">
+
+  <!-- ════════════ SIDEBAR ════════════ -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">♻️</div>
+      <div>
+        <div class="logo-text">SmartWaste AI</div>
+        <div class="logo-sub">Management System</div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-group">
+        <div class="nav-group-label">Overview</div>
+        <div class="nav-item active" data-page="page-dashboard">
+          <span class="nav-icon">📊</span>
+          <span class="nav-label">Dashboard</span>
+        </div>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-group-label">Operations</div>
+        <div class="nav-item" data-page="page-bins">
+          <span class="nav-icon">🗑️</span>
+          <span class="nav-label">Waste Bins</span>
+          <span class="nav-badge">!</span>
+        </div>
+        <div class="nav-item" data-page="page-zones">
+          <span class="nav-icon">🗺️</span>
+          <span class="nav-label">Zones &amp; Areas</span>
+        </div>
+        <div class="nav-item" data-page="page-fleet">
+          <span class="nav-icon">🚛</span>
+          <span class="nav-label">Fleet Management</span>
+        </div>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-group-label">AI Intelligence</div>
+        <div class="nav-item" data-page="page-predictions">
+          <span class="nav-icon">🤖</span>
+          <span class="nav-label">AI Predictions</span>
+        </div>
+        <div class="nav-item" data-page="page-insights">
+          <span class="nav-icon">💡</span>
+          <span class="nav-label">AI Insights</span>
+        </div>
+        <div class="nav-item" data-page="page-analytics">
+          <span class="nav-icon">📈</span>
+          <span class="nav-label">Analytics</span>
+        </div>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sys-status">
+        <div class="status-dot green" id="sys-dot"></div>
+        <span id="sys-status-text">AI Engine Active</span>
+      </div>
+      <div class="text-muted" style="font-size:11px;margin-top:6px">v1.0.0 · Node.js + Express</div>
+    </div>
+  </aside>
+  <div class="sidebar-overlay"></div>
+
+  <!-- ════════════ MAIN ════════════ -->
+  <div class="main-area">
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <button class="menu-toggle" aria-label="Toggle menu">☰</button>
+      <span class="topbar-title">Dashboard</span>
+      <span class="topbar-meta" id="live-clock"></span>
+      <button class="btn primary" onclick="location.reload()">🔄 Refresh</button>
+    </header>
+
+    <!-- Content Area -->
+    <main class="content">
+
+      <!-- ══════════════════════════════════════
+           PAGE: DASHBOARD
+      ══════════════════════════════════════ -->
+      <section class="page active" id="page-dashboard">
+        <div class="section-header">
+          <div>
+            <h2>📊 Live Operations Dashboard</h2>
+            <p>Real-time monitoring of waste collection across all zones</p>
+          </div>
+        </div>
+
+        <!-- KPI Row -->
+        <div class="kpi-grid">
+          <div class="kpi-card accent">
+            <div class="kpi-label">Total Bins</div>
+            <div class="kpi-value" id="kpi-bins"><span class="skeleton" style="width:60px;height:32px;display:inline-block"></span></div>
+            <div class="kpi-sub">Across all zones</div>
+          </div>
+          <div class="kpi-card red">
+            <div class="kpi-label">Critical</div>
+            <div class="kpi-value text-red" id="kpi-critical">—</div>
+            <div class="kpi-sub">Need immediate pickup</div>
+          </div>
+          <div class="kpi-card yellow">
+            <div class="kpi-label">Warning</div>
+            <div class="kpi-value text-yellow" id="kpi-warning">—</div>
+            <div class="kpi-sub">Fill ≥ 75%</div>
+          </div>
+          <div class="kpi-card green">
+            <div class="kpi-label">Avg Fill Level</div>
+            <div class="kpi-value" id="kpi-fill">—</div>
+            <div class="kpi-sub">System average</div>
+          </div>
+          <div class="kpi-card green">
+            <div class="kpi-label">Recycle Rate</div>
+            <div class="kpi-value text-green" id="kpi-recycle">—</div>
+            <div class="kpi-sub">Of total waste</div>
+          </div>
+          <div class="kpi-card accent">
+            <div class="kpi-label">Active Trucks</div>
+            <div class="kpi-value" id="kpi-vehicles">—</div>
+            <div class="kpi-sub">On route now</div>
+          </div>
+          <div class="kpi-card purple">
+            <div class="kpi-label">Fleet Utilisation</div>
+            <div class="kpi-value" id="kpi-fleet">—</div>
+            <div class="kpi-sub">Load capacity</div>
+          </div>
+          <div class="kpi-card green">
+            <div class="kpi-label">Sensor Coverage</div>
+            <div class="kpi-value" id="kpi-sensor">—</div>
+            <div class="kpi-sub">IoT enabled bins</div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <!-- Waste trend -->
+          <div class="card">
+            <div class="card-header">
+              <h3>📈 14-Day Waste Trend</h3>
+              <span class="text-muted" style="font-size:12px">kg / day</span>
+            </div>
+            <div class="chart-container" style="height:260px">
+              <canvas id="chart-waste-trend"></canvas>
+            </div>
+          </div>
+
+          <!-- Zone donut -->
+          <div class="card">
+            <div class="card-header">
+              <h3>🗺️ Zone Fill Levels</h3>
+              <span class="text-muted" style="font-size:12px">avg %</span>
+            </div>
+            <div class="chart-container" style="height:260px">
+              <canvas id="chart-zone-donut"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <!-- Live map -->
+          <div class="card">
+            <div class="card-header">
+              <h3>🗺️ Bin Status Map</h3>
+              <div style="display:flex;gap:12px;font-size:11px">
+                <span><span style="color:var(--red)">●</span> Critical</span>
+                <span><span style="color:var(--yellow)">●</span> Warning</span>
+                <span><span style="color:var(--green)">●</span> Normal</span>
+              </div>
+            </div>
+            <div class="map-container" id="bins-map">
+              <div class="map-grid"></div>
+              <span class="text-muted" style="position:relative;z-index:1">Loading map…</span>
+            </div>
+          </div>
+
+          <!-- Alert feed -->
+          <div class="card">
+            <div class="card-header">
+              <h3>🔔 Live Alerts</h3>
+              <button class="btn sm" onclick="App.navigate('page-bins')">View All</button>
+            </div>
+            <div class="alert-feed" id="alert-feed">
+              <div class="loading"><div class="spinner"></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════
+           PAGE: BINS
+      ══════════════════════════════════════ -->
+      <section class="page" id="page-bins">
+        <div class="section-header">
+          <div>
+            <h2>🗑️ Waste Bin Monitor</h2>
+            <p>Real-time fill level monitoring for all IoT-connected waste bins</p>
+          </div>
+        </div>
+        <div class="bins-filter-bar">
+          <select class="filter-select" id="filter-zone"><option value="">All Zones</option></select>
+          <select class="filter-select" id="filter-status">
+            <option value="">All Status</option>
+            <option value="critical">Critical</option>
+            <option value="warning">Warning</option>
+            <option value="normal">Normal</option>
+          </select>
+          <select class="filter-select" id="filter-type">
+            <option value="">All Types</option>
+            <option value="general">General</option>
+            <option value="recyclable">Recyclable</option>
+            <option value="organic">Organic</option>
+            <option value="hazardous">Hazardous</option>
+          </select>
+        </div>
+        <div class="bins-grid" id="bins-grid">
+          <div class="loading"><div class="spinner"></div> Loading bins…</div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════
+           PAGE: ZONES
+      ══════════════════════════════════════ -->
+      <section class="page" id="page-zones">
+        <div class="section-header">
+          <div>
+            <h2>🗺️ Zones &amp; Areas</h2>
+            <p>Collection zone overview with bin statistics</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th><th>Zone Name</th><th>Type</th><th>Population</th>
+                  <th>Bins</th><th>Avg Fill</th><th>Critical</th><th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="zones-table-body">
+                <tr><td colspan="8"><div class="loading"><div class="spinner"></div></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════
+           PAGE: FLEET
+      ══════════════════════════════════════ -->
+      <section class="page" id="page-fleet">
+        <div class="section-header">
+          <div>
+            <h2>🚛 Fleet Management</h2>
+            <p>Live vehicle status, load capacity and routing</p>
+          </div>
+        </div>
+        <div class="grid-2" style="margin-bottom:20px">
+          <div class="card mb-0">
+            <div class="card-header"><h3>Vehicle Overview</h3></div>
+            <div class="chart-container" style="height:280px">
+              <canvas id="chart-fleet"></canvas>
+            </div>
+          </div>
+          <div class="card mb-0">
+            <div class="card-header"><h3>Fleet Status</h3></div>
+            <div class="grid-2" id="vehicles-grid" style="gap:12px">
+              <div class="loading"><div class="spinner"></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════
+           PAGE: AI PREDICTIONS
+      ══════════════════════════════════════ -->
+      <section class="page" id="page-predictions">
+        <div class="section-header">
+          <div>
+            <h2>🤖 AI Collection Prediction</h2>
+            <p>Waste volume forecast using linear regression + seasonal decomposition</p>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <select class="filter-select" id="pred-zone-sel"><option value="">All Zones</option></select>
+            <select class="filter-select" id="pred-days-sel">
+              <option value="7">7 Days</option>
+              <option value="14">14 Days</option>
+              <option value="30">30 Days</option>
+            </select>
+            <button class="btn primary" id="run-prediction-btn">▶ Run AI Model</button>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header">
+              <h3>📊 Predicted Waste Volume</h3>
+              <div style="display:flex;gap:8px;font-size:11px">
+                <span style="color:var(--green)">■</span> Low
+                <span style="color:var(--yellow)">■</span> Medium
+                <span style="color:var(--red)">■</span> High
+              </div>
+            </div>
+            <div class="chart-container" style="height:280px">
+              <canvas id="chart-predictions"></canvas>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header"><h3>📅 Recommended Schedule</h3></div>
+            <div id="schedule-list">
+              <div class="loading"><div class="spinner"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>📋 Prediction Table</h3>
+            <button class="btn sm primary" id="get-route-btn">🗺️ Optimise Route</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th><th>Day</th><th>Predicted</th>
+                  <th>90% CI Range</th><th>Confidence</th><th>Peak Risk</th><th>Schedule</th>
+                </tr>
+              </thead>
+              <tbody id="pred-table-body">
+                <tr><td colspan="7"><div class="loading"><div class="spinner"></div></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div id="route-output" style="margin-top:16px"></div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════
+           PAGE: AI INSIGHTS
+      ══════════════════════════════════════ -->
+      <section class="page" id="page-insights">
+        <div class="section-header">
+          <div>
+            <h2>💡 AI Insights &amp; Recommendations</h2>
+            <p>Automated anomaly detection and intelligent operational guidance</p>
+          </div>
+        </div>
+        <div id="insights-content">
+          <div class="loading"><div class="spinner"></div> Analysing system data…</div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════
+           PAGE: ANALYTICS
+      ══════════════════════════════════════ -->
+      <section class="page" id="page-analytics">
+        <div class="section-header">
+          <div>
+            <h2>📈 Analytics &amp; Reports</h2>
+            <p>30-day historical analysis and complaint management</p>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header"><h3>📈 30-Day Waste Trend</h3></div>
+            <div class="chart-container" style="height:280px">
+              <canvas id="chart-analytics-trend"></canvas>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3>📊 Complaint Types</h3></div>
+            <div class="chart-container" style="height:280px">
+              <canvas id="chart-complaints"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><h3>🗂️ Recent Complaints</h3></div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Date</th><th>Zone</th><th>Type</th><th>Priority</th><th>Status</th></tr>
+              </thead>
+              <tbody id="complaints-body">
+                <tr><td colspan="5"><div class="loading"><div class="spinner"></div></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div><!-- .main-area -->
+</div><!-- .app-layout -->
+
+<script src="/js/api.js"></script>
+<script src="/js/charts.js"></script>
+<script src="/js/app.js"></script>
+</body>
+</html>

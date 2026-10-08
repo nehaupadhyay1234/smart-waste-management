@@ -1,0 +1,24 @@
+{
+  "name": "smart-waste-management",
+  "version": "1.0.0",
+  "description": "AI-Based Smart Waste Management and Collection Prediction System",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "nodemon server/index.js",
+    "seed": "node server/seed.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "uuid": "^9.0.0",
+    "node-cron": "^3.0.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "keywords": ["waste-management", "AI", "smart-city", "prediction"],
+  "author": "Smart City Solutions",
+  "license": "MIT"
+}
